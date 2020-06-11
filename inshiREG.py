@@ -1,4 +1,5 @@
 import csv
+import numpy as np
 from sklearn import linear_model
 
 f=open("rent.csv","r")
@@ -24,6 +25,13 @@ for row in reader:
         tmp=[]
 reg = linear_model.LinearRegression()
 reg.fit(x, y)
+x=np.array(x)
+y_pred=reg.predict(x)
+sse=np.sum((y-y_pred)**2,axis=0)
+sse=sse/(x.shape[0]-x.shape[1]-1)
+s=np.linalg.inv(np.dot(x.T,x))
+std_err=np.sqrt(np.diagonal(sse*s))
+
 a = reg.coef_
 b = reg.intercept_
 out=[]
@@ -31,6 +39,7 @@ tmp=[]
 for i in range(len(name)):
     tmp.append(name[i])
     tmp.append(a[i])
+    tmp.append(a[i]/std_err[i])
     out.append(tmp)
     tmp=[]
 tmp.append("切片")
