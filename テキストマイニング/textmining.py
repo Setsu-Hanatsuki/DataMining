@@ -3,8 +3,6 @@ from sklearn.feature_extraction.text import CountVectorizer,TfidfVectorizer
 from sklearn.cluster import KMeans
 from sklearn.decomposition import LatentDirichletAllocation
 import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
 
 tex=fetch_20newsgroups(remove=("headers","footers","quotes"))
 
