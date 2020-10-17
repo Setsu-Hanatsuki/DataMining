@@ -4,4 +4,4 @@
 参考文献→https://algorithm.joho.info/programming/python/pandas-quantification-methods-1/<br>
 "outvalue"シリーズは外れ値の発見方法で、無印は予測値とテストデータが外れた場合のsoftmax関数の値から外れ値を見つける。2はクロスバリデーションを用いてデータ群から外れ値の場所を推定する。<br>
 "cvnn.py"はCNNでは判別できなかったややこしい画像をSoftmax関数の数値とともに保存して自分の目で見るプログラムです。「waim」というフォルダを作ってください。<br>
-"RNN_LSTM.py"は時系列データをRNNで予測します
+"RNN_LSTM.py"は時系列データをRNNで予測します。参考はこちら→　https://qiita.com/sasayabaku/items/b7872a3b8acc7d6261bf
