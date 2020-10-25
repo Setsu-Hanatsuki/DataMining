@@ -5,6 +5,7 @@ import librosa.display
 import os
 import glob
 import matplotlib.pyplot as plt
+from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import accuracy_score,precision_score,recall_score,f1_score
@@ -31,6 +32,7 @@ for i in range(10):
     label.append(1)
 for i in range(len(data)):
     data[i]=sum(data[i])/len(data[i])
+data = preprocessing.minmax_scale(data)
 
 #データの分割
 x_train, x_test, y_train, y_test = train_test_split(data, label, test_size=0.3)
