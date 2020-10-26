@@ -9,6 +9,7 @@ from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import accuracy_score,precision_score,recall_score,f1_score
+from sklearn.metrics import classification_report,confusion_matrix
 from scipy import fftpack
 
 #データのロードと前処理
@@ -53,3 +54,5 @@ print("Recall")
 print(recall_score(y_test, y_pred,average="macro"))
 print("F1-score")
 print(f1_score(y_test, y_pred,average="macro"))
+print(classification_report(y_test, y_pred))
+print(confusion_matrix(y_test,y_pred))
