@@ -22,7 +22,7 @@ for i in range(9):
     y=np.fft.fft(a)
     amp=np.abs(y)
     power=amp**2
-    data.append(power)
+    data.append(power[:int(len(power)/2)])
     label.append(0)
 
 for i in range(10):
@@ -32,7 +32,7 @@ for i in range(10):
     y=np.fft.fft(a)
     amp=np.abs(y)
     power=amp**2
-    data.append(power)
+    data.append(power[:int(len(power)/2)])
     label.append(1)
 data = preprocessing.minmax_scale(data)
 
