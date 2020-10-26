@@ -16,7 +16,7 @@ import scipy.fftpack as spfft
 data=[]
 label=[]
 for i in range(9):
-    path="Asami/1-"+str(i+1)+".mp3"
+    path="フォルダ名"+str(i+1)+"拡張子名"
     a,sr=librosa.load(path)
     a=a[:100000]
     y=np.fft.fft(a)
@@ -26,7 +26,7 @@ for i in range(9):
     label.append(0)
 
 for i in range(10):
-    path="Yuuki/2-"+str(i+1)+".mp3"
+    path="フォルダ名"+str(i+1)+"拡張子名"
     a,sr=librosa.load(path)
     a=a[:100000]
     y=np.fft.fft(a)
