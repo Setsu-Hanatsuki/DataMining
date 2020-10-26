@@ -33,8 +33,6 @@ for i in range(10):
     for j in range(len(y)):
         data.append(y[j])
         label.append(1)
-#for i in range(len(data)):
-#    data[i]=sum(data[i])/len(data[i])
 data = preprocessing.minmax_scale(data)
 
 #データの分割
