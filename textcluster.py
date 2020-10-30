@@ -18,7 +18,7 @@ x=x.toarray()
 y=text.target
 
 #デンドログラム作成
-pca=PCA(n_components=100)
+pca=PCA(n_components=100)#単語の数が多すぎるので圧縮
 pca.fit(x)
 tpc=pca.transform(x)
 df=pd.DataFrame(tpc)
