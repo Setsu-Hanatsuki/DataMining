@@ -1,37 +1,34 @@
+#ライブラリのインポート
 from sklearn.ensemble import RandomForestClassifier
 from sklearn import preprocessing
-import csv
+import numpy as np
+import pandas as pd
 
-f=open("wine.csv","r")
-reader=csv.reader(f)
-k=0
-name=[]
-tmp=[]
-x=[]
-y=[]
-for row in reader:
-    if k==0:
-        for j in range(len(row)):
-            if j!=0:
-                name.append(row[j])
-        k=1
-    else:
-        for i in range(len(row)):
-            if i!=0:
-                tmp.append(row[i])
-            else:
-                y.append(int(row[i]))
-        x.append(tmp)
-        tmp=[]
+#データの読み込み
+df=pd.read_csv("wine.csv")
+y_table=df["Wine"]
+x_table=df.drop(columns="Wine")
+y=y_table.values
+x=x_table.values
+name=x_table.columns
+
+#データの前処理
 x = preprocessing.minmax_scale(x)
-clf = RandomForestClassifier(n_estimators=10)
-clf.fit(x, y)
-importances = clf.feature_importances_
+
+#モデルの定義
+model=RandomForestClassifier(n_estimators=10)
+
+#学習
+model.fit(x,y)
+
+#因子重要度
+imp=model.feature_importances_
+
+#出力
 out=[]
-tmp=[]
-for i in range(len(x[0])):
-    tmp.append(name[i])
-    tmp.append(importances[i])
-    out.append(tmp)
-    tmp=[]
-print(out)
+out.append(name)
+out.append(imp)
+out=np.array(out).T
+dfo=pd.DataFrame(out)
+dfo.columns=["項目","重要度"]
+print(dfo)
