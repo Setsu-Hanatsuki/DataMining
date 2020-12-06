@@ -1,52 +1,46 @@
-import csv
+#ライブラリのインポート
+import pandas as pd
 import numpy as np
 from sklearn import linear_model
 
-f=open("rent.csv","r")
-reader=csv.reader(f)
-k=0
-name=[]
-tmp=[]
-x=[]
-y=[]
-for row in reader:
-    if k==0:
-        for j in range(len(row)):
-            if j!=0:
-                name.append(row[j])
-        k=1
-    else:
-        for i in range(len(row)):
-            if i!=0:
-                tmp.append(float(row[i]))
-            else:
-                y.append(float(row[i]))
-        x.append(tmp)
-        tmp=[]
-reg = linear_model.LinearRegression()
-reg.fit(x, y)
-x=np.array(x)
-y_pred=reg.predict(x)
-sse=np.sum((y-y_pred)**2,axis=0)
-sse=sse/(x.shape[0]-x.shape[1]-1)
-s=np.linalg.inv(np.dot(x.T,x))
-std_err=np.sqrt(np.diagonal(sse*s))
+#データの読み込み
+df=pd.read_csv("rent.csv",encoding="shift-jis")
+y_table=df["家賃"]
+x_table=df.drop(columns="家賃")
+y=y_table.values
+x=x_table.values
+name=x_table.columns
 
-a = reg.coef_
-b = reg.intercept_
+#モデルの定義
+model=linear_model.LinearRegression()
+
+#学習
+model.fit(x,y)
+
+#モデル
+a = model.coef_     #重み
+b = model.intercept_#切片
+
+#予測値の生成
+y_pred=model.predict(x)
+
+#標準誤差を算出
+se=np.sum((y-y_pred)**2,axis=0)
+se=se/(x.shape[0]-x.shape[1]-1)
+s=np.linalg.inv(np.dot(x.T,x))
+stder=np.sqrt(np.diagonal(se*s))
+
+#t値を算出
+t=a/stder
+
+#出力
 out=[]
-tmp=[]
-for i in range(len(name)):
-    tmp.append(name[i])
-    tmp.append(a[i])
-    tmp.append(a[i]/std_err[i])
-    out.append(tmp)
-    tmp=[]
-tmp.append("切片")
-tmp.append(b)
-out.append(tmp)
-tmp=[]
-tmp.append("決定係数")
-tmp.append(reg.score(x,y))
-out.append(tmp)
-print(out)
+out.append(name)
+out.append(a)
+out.append(t)
+out=np.array(out).T
+dfo=pd.DataFrame(out)
+dfo.columns=["因子名","重み","t値"]
+print(dfo)
+print("決定係数\t"+str(model.score(x,y)))
+print("切片\t"+str(b))
