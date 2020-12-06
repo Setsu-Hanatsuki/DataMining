@@ -1,42 +1,45 @@
+#ライブラリのインポート
 from sklearn.decomposition import PCA
 from sklearn import preprocessing
-import csv
+import numpy as np
+import pandas as pd
 
-f=open("wine.csv","r")
-reader=csv.reader(f)
-k=0
-name=[]
-tmp=[]
-x=[]
-y=[]
-for row in reader:
-    if k==0:
-        for j in range(len(row)):
-            if j!=0:
-                name.append(row[j])
-        k=1
-    else:
-        for i in range(len(row)):
-            if i!=0:
-                tmp.append(row[i])
-            else:
-                y.append(int(row[i]))
-        x.append(tmp)
-        tmp=[]
+#データの読み込み
+df=pd.read_csv("wine.csv")
+x_table=df.drop(columns="Wine")
+x=x_table.values
+name=x_table.columns
+
+#データの前処理
 x = preprocessing.minmax_scale(x)
+
+#モデルの定義
 pca = PCA(n_components=len(x[0]))
+
+#学習
 pca.fit(x)
-kiyoritsu=pca.explained_variance_ratio_
-koyuuvector=pca.components_
-out=[]
+
+#寄与率
+con=pca.explained_variance_ratio_
+
+#固有ベクトル
+fac=pca.components_
+
+#因子負荷量
 tmp=[]
-for i in range(len(x[0])):
+total=[]
+for i in range(len(con)):
+    for j in range(len(fac[i])):
+        tmp.append(np.sqrt(con[i])*fac[i][j])
+    total.append(tmp)
+    tmp=[]
+out=[]
+total=np.array(total).T
+for i in range(len(total)):
     tmp.append(name[i])
-    sump=0
-    for j in range(len(koyuuvector)):
-        sump=sump+abs(koyuuvector[j][i])*kiyoritsu[j]
-    tmp.append(sump)
+    tmp.append(sum(abs(total[i])))
     out.append(tmp)
     tmp=[]
-
-print(out)
+dfo=pd.DataFrame(out)
+dfo.columns=["因子名","因子負荷量総計"]
+print(dfo)
