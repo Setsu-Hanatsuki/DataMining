@@ -14,72 +14,76 @@ import matplotlib.pyplot as plt
 
 #黒縁
 def preprocess(img):
-    h, w, c = img.shape
-    longest_edge = max(h, w)
-    top = 0
-    bottom = 0
-    left = 0
-    right = 0
-    if h < longest_edge:
-        diff_h = longest_edge - h
-        top = diff_h // 2
-        bottom = diff_h - top
-    elif w < longest_edge:
-        diff_w = longest_edge - w
-        left = diff_w // 2
-        right = diff_w - left
+    h,w,c=img.shape
+    longest_edge=max(h, w)
+    top=0
+    bottom=0
+    left=0
+    right=0
+    if h<longest_edge:
+        diff_h=longest_edge-h
+        top=diff_h//2
+        bottom=diff_h-top
+    elif w<longest_edge:
+        diff_w=longest_edge - w
+        left=diff_w//2
+        right=diff_w-left
     else:
         pass
-    img = cv2.copyMakeBorder(img, top, bottom, left, right,
-                             cv2.BORDER_CONSTANT, value=[0, 0, 0])
+    img=cv2.copyMakeBorder(img,top,bottom,left,right,
+                             cv2.BORDER_CONSTANT,value=[0, 0, 0])
     img=cv2.resize(img,(int(longest_edge*0.25),int(longest_edge*0.25)))
     return img
 
 #水増し
-def incimg(image):
-    src=np.array(image)
-    r90=np.array(image.rotate(90))
-    r18=np.array(image.rotate(180))
-    r27=np.array(image.rotate(270))
-    flp=np.array(ImageOps.flip(image))
-    mrr=np.array(ImageOps.mirror(image))
-    x1=np.hstack((src,r90))
-    x1=np.hstack((x1,r18))
-    x2=np.hstack((r27,flp))
-    x2=np.hstack((x2,mrr))
-    nimg=np.vstack((x1,x2))
-    nimg=nimg.astype("float32")
-    nimg/=255
-    nimg=cv2.cvtColor(nimg, cv2.COLOR_RGB2BGR)
-    return nimg
-
-
+def incimg(x,y):
+    ly=len(y)
+    x*=255
+    x2=[]
+    s=Image.fromarray(np.uint8(x[0]))
+    w,h=s.size
+    for i in range(ly):
+        src=Image.fromarray(np.uint8(x[i]))
+        y.append(y[i])
+        y.append(y[i])
+        y.append(y[i])
+        y.append(y[i])
+        y.append(y[i])
+        x2.append(np.array(src.rotate(90)))
+        x2.append(np.array(src.rotate(180)))
+        x2.append(np.array(src.rotate(270)))
+        x2.append(np.array(ImageOps.flip(src)))
+        x2.append(np.array(ImageOps.mirror(image)))
+    x2=np.array(x2)
+    x=np.append(x,x2)
+    x=x.astype("float32")
+    x/=255
+    x=np.reshape(x,[ly*6,h,w,3])
+    return x,y
+        
 #データの読み込み
 x=[]
 y=[]
 for path in glob.glob("./2/*"):
     image=Image.open(path)
-    nimg=incimg(image)
-    nimg=preprocess(nimg)
-    x.append(nimg)
+    x.append(np.array(image))
     y.append(0)
+    
     
 for path in glob.glob("./4/*"):
     image=Image.open(path)
-    nimg=incimg(image)
-    nimg=preprocess(nimg)
-    x.append(nimg)
+    x.append(np.array(image))
     y.append(1)
 
 for path in glob.glob("./10/*"):
     image=Image.open(path)
-    nimg=incimg(image)
-    nimg=preprocess(nimg)
-    x.append(nimg)
+    x.append(np.array(image))
     y.append(2)
 
 #データの前処理
 x=np.array(x)
+x=x.astype("float32")
+x/=255
 
 #データの分割
 #x,x_test,y,y_test=train_test_split(x,y,test_size=0.2)
@@ -106,17 +110,7 @@ batch_size = 58 #default=58
 num_classes = 10
 epochs = 150
 earlystop=EarlyStopping(monitor='val_loss', patience=2, verbose=1, mode='auto')
-"""
-history=model.fit(x_train,
-          y_train,
-          batch_size=batch_size,
-          epochs=epochs,
-          verbose=1,
-          validation_data=(x_val, y_val),
-          callbacks=[earlystop],
-          shuffle=True,
-          steps_per_epoch=len(x_train))
-"""
+x_train,y_train=incimg(x_train,y_train)
 history=model.fit(x_train, y_train, batch_size=batch_size, epochs=epochs,verbose=1,validation_data=(x_test, y_test),callbacks=[earlystop],shuffle=True)
 
 
@@ -142,7 +136,7 @@ plt.plot(ep,val_acc,label="val_acc")
 plt.legend()
 plt.show()
 plt.plot(ep,loss,label="loss")
-plt.plot(ep,val_loss,label="val_loss")
+plt.plot(ep,val_los,label="val_loss")
 plt.legend()
 plt.show()
 """
